@@ -1,69 +1,12 @@
-// package org.example;
-// //hello
-// public class Main {
-//     public static void main(String[] args) {
+package org.example;
 
-//     }
-// }
-package org.os;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-public class ParkingLot {
-    private static final int TotalSpots = 4;
-    private static final Semaphore parkingSpots = new Semaphore(TotalSpots);
-    private static int totalCarsServed = 0;
-
-    static class Car implements Runnable {
-        private final String carID;
-        private final int parkDuration;
-
-        public Car(String carID, int parkDuration) {
-            this.carID = carID;
-            this.parkDuration = parkDuration;
-        }
-
-        @Override
-        public void run() {
-            try {
-                System.out.println(carID + "  arrived at time.");
-
-                // Acquire a parking spot
-                parkingSpots.acquire();
-                totalCarsServed++;
-
-                System.out.println(carID + " parked. (Parking Status: " + (TotalSpots - parkingSpots.availablePermits()) + " spots occupied)");
-
-                // Simulate staying in the parking lot
-                TimeUnit.SECONDS.sleep(parkDuration);
-
-                // Release the parking spot and log exit
-                System.out.println(carID + " is left after " + parkDuration + " units of time. (Parking Status: " + (TotalSpots - parkingSpots.availablePermits() + 1) + " spots occupied)");
-                parkingSpots.release();
-
-            } catch (InterruptedException e) {
-                System.out.println(carID + " was interrupted.");
-            }
-        }
-    }
-
-    static class Gate {
-        private final String gateName;
-
-        public Gate(String gateName) {
-            this.gateName = gateName;
-        }
-
-        public void handleCarArrival(String carID, int parkDuration) {
-            Car car = new Car(carID, parkDuration);
-            new Thread(car).start();
-        }
-    }
-
+public class Main {
     public static void main(String[] args) {
         // Create gates
         Gate gate1 = new Gate("Gate 1");
@@ -72,7 +15,9 @@ public class ParkingLot {
 
         try (BufferedReader br = new BufferedReader(new FileReader("input.txt"))) {
             String line;
+
             while ((line = br.readLine()) != null) {
+                line = line.trim();
                 String[] parts = line.split(", ");
                 String gateName = parts[0];
                 String carId = parts[1];
@@ -106,6 +51,6 @@ public class ParkingLot {
             Thread.currentThread().interrupt();
         }
 
-        System.out.println("Total Cars Served: " + totalCarsServed);
+        System.out.println("Total Cars Served: " + ParkingLot.getTotalCarsServed());
     }
 }
