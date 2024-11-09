@@ -4,45 +4,42 @@ package org.example;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
+
 
 public class Main {
     public static void main(String[] args) {
         // Create gates
-        Gate gate1 = new Gate("Gate 1");
-        Gate gate2 = new Gate("Gate 2");
-        Gate gate3 = new Gate("Gate 3");
+        Gate gate1 = new Gate(1);
+        Gate gate2 = new Gate(2);
+        Gate gate3 = new Gate(3);
 
         try (BufferedReader br = new BufferedReader(new FileReader("input.txt"))) {
             String line;
 
             while ((line = br.readLine()) != null) {
                 line = line.trim();
-                String[] parts = line.split(", ");
-                String gateName = parts[0];
+                String[] parts = line.split(", ");//parts[0]=Gate #, parts[1]=Car #, parts[2]=Arrive #, parts[3]=Parks #
+                int gateID = Integer.parseInt(parts[0].split(" ")[1]);
                 String carId = parts[1];
                 int arriveTime = Integer.parseInt(parts[2].split(" ")[1]);
                 int parkDuration = Integer.parseInt(parts[3].split(" ")[1]);
 
-                // Simulate arrival time using sleep
-                TimeUnit.SECONDS.sleep(arriveTime);
-
                 // Handle car arrival based on the gate
-                switch (gateName) {
-                    case "Gate 1":
-                        gate1.handleCarArrival(carId + " from " + gateName, parkDuration);
+                switch (gateID) {
+                    case 1:
+                        gate1.handleCarArrival(carId, arriveTime, parkDuration, gateID);
                         break;
-                    case "Gate 2":
-                        gate2.handleCarArrival(carId + " from " + gateName, parkDuration);
+                    case 2:
+                        gate2.handleCarArrival(carId, arriveTime, parkDuration, gateID);
                         break;
-                    case "Gate 3":
-                        gate3.handleCarArrival(carId + " from " + gateName, parkDuration);
+                    case 3:
+                        gate3.handleCarArrival(carId, arriveTime, parkDuration, gateID);
                         break;
                     default:
-                        System.out.println("Unknown gate: " + gateName);
+                        System.out.println("Unknown gate: " + gateID);
                 }
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         try {
@@ -51,6 +48,19 @@ public class Main {
             Thread.currentThread().interrupt();
         }
 
-        System.out.println("Total Cars Served: " + ParkingLot.getTotalCarsServed());
+        ParkingLot.getLogLock().lock();
+        try {
+            System.out.println("\nTotal Cars Served: " + ParkingLot.getTotalCarsServed());
+            System.out.println("Current Cars in Parking: " + ParkingLot.getCurrentParked());
+            System.out.println("Details:");
+            for (int i = 0; i < ParkingLot.getGateCarsServed().length; i++) {
+                System.out.println("- Gate " + (i + 1) + " served " + ParkingLot.getGateCarsServed()[i] + " cars.")
+                ;
+            }
+        } finally {
+            ParkingLot.getLogLock().unlock();
+        }
+
     }
 }
+

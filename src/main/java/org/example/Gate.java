@@ -1,14 +1,18 @@
 package org.example;
 
 public class Gate {
-    private final String gateName;
+    private final int gateId;
 
-    public Gate(String gateName) {
-        this.gateName = gateName;
+    public Gate(int gateName) {
+        this.gateId = gateName;
     }
 
-    public void handleCarArrival(String carID, int parkDuration) {
-        Car car = new Car(carID, parkDuration);
+    public int getGateId() {
+        return this.gateId;
+    }
+
+    public void handleCarArrival(String carId, int arriveTime, int parkDuration, int gateId) {
+        Car car = new Car(carId, arriveTime, parkDuration, gateId);
         new Thread(car).start();
     }
 }
