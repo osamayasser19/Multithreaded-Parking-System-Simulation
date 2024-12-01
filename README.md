@@ -1,4 +1,3 @@
-Based on the assignment's requirements, we can split it among four team members. Here’s a proposed breakdown, including an analysis of what's easy and challenging for each part:
 
 1. Parking Lot Setup and Semaphore Management
 
